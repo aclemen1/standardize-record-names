@@ -119,7 +119,7 @@ def safe_rename(source, target):
         name, inc = (re.findall(r'(.*)_(\d+)$', new_element) or [(new_element, '0')])[0]
         new_element = name + '_' + str(int(inc)+1)
     os.rename(source, new_element)
-    return new_element
+    return new_element.encode('utf-8')
 
 
 def standardize_element(source):
