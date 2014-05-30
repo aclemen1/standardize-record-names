@@ -20,15 +20,21 @@ __contact__ = "unisis@unil.ch"
 __copyright__ = "Copyright 2014, University of Lausanne, Switzerland"
 __credits__ = ["Gérard Bagnoud", "Nathalie Montet", "Raphaël Mottier"]
 __license__ = "GPL"
-__date__ = "2014-05-25"
-__version__ = "1.0.1"
+__date__ = "2014-05-30"
+__version__ = "1.0.2"
 __maintainer__ = "Alain Clément-Pavon"
 __email__ = "alain.clement-pavon@unil.ch"
 __status__ = "Production"
 
 
 PRINTABLE = {'Lu', 'Ll', 'Nd', 'Zs', 'Pc'}
-VOID_WORDS = ["l'", 'le', 'la', 'les', "d'", 'de', 'des', 'un', 'une', "s'", 'si', u'à', "n'", 'en']
+VOID_WORDS = ["l'", 'le', 'la', 'les',
+              "d'", 'de', 'des',
+              'un', 'une',
+              "s'", 'si',
+              u'à',
+              "n'",
+              'en', 'sur']
 
 
 def compose(*functions):
