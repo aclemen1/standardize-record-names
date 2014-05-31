@@ -13,12 +13,6 @@ class TestStringModifiers(unittest.TestCase):
             main.remove_diacritics(u'éèàäüöç')
         )
 
-    def test_void_words(self):
-        self.assertEqual(
-            '',
-            main.remove_void_words(' '.join(main.VOID_WORDS)).replace(' ', '')
-        )
-
     def test_non_printable(self):
         self.assertEqual(
             '',
@@ -87,7 +81,7 @@ class TestStringModifiers(unittest.TestCase):
 
     def test_standardize(self):
         self.assertEqual(
-            u'vie_est__super__long_fleuve_tranquille_pas_douter',
+            u'la_vie_est_un__super__long_fleuve_tranquille_a_nen_pas_douter',
             main.standardize(u'la vie, est un __super__ long fleuve tranquille, à n\'en pas douter .-*+&%/()')
         )
 

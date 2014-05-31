@@ -28,13 +28,6 @@ __status__ = "Production"
 
 
 PRINTABLE = {'Lu', 'Ll', 'Nd', 'Zs', 'Pc'}
-VOID_WORDS = ["l'", 'le', 'la', 'les',
-              "d'", 'de', 'des',
-              'un', 'une',
-              "s'", 'si',
-              u'à',
-              "n'",
-              'en', 'sur']
 
 
 def compose(*functions):
@@ -49,16 +42,6 @@ def remove_diacritics(string):
     Remove diacritic characters.
     """
     return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')
-
-
-def remove_void_words(string):
-    """
-    Remove void words.
-    """
-    regex = re.compile(
-        r'\b(' + '|'.join([re.escape(word.replace('\'', '')) for word in VOID_WORDS]) + r')\b',
-        flags=re.IGNORECASE | re.UNICODE)
-    return regex.sub('', string.replace('\'', ' '))
 
 
 def remove_non_printable(string):
@@ -115,7 +98,6 @@ standardize = compose(
     remove_non_printable,
     substitute_underscore_to_minus,
     remove_diacritics,
-    remove_void_words,
 )
 
 
@@ -123,7 +105,7 @@ def safe_rename(source, target):
     new_element = target
     while os.path.exists(new_element):
         name, inc = (re.findall(r'(.*)_(\d+)$', new_element) or [(new_element, '0')])[0]
-        new_element = name + u'_' + str(int(inc)+1)
+        new_element = name + u'_' + str(int(inc)+1).decode('utf-8')
     os.rename(source, new_element)
     return new_element
 
@@ -141,7 +123,7 @@ def standardize_tree(source):
     if os.path.isfile(source):
         standardize_element(source)
     elif os.path.isdir(source):
-        for element in glob.glob(source + '/*'):
+        for element in glob.glob(source + u'/*'):
             standardize_tree(element)
         standardize_element(source)
 
