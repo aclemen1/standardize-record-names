@@ -57,7 +57,7 @@ def remove_void_words(string):
     """
     regex = re.compile(
         r'\b(' + '|'.join([re.escape(word.replace('\'', '')) for word in VOID_WORDS]) + r')\b',
-        flags=re.IGNORECASE & re.UNICODE)
+        flags=re.IGNORECASE | re.UNICODE)
     return regex.sub('', string.replace('\'', ' '))
 
 
