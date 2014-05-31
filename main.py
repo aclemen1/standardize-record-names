@@ -57,7 +57,7 @@ def remove_void_words(string):
     """
     regex = re.compile(
         r'\b(' + '|'.join([re.escape(word.replace('\'', '')) for word in VOID_WORDS]) + r')\b',
-        flags=re.IGNORECASE + re.UNICODE)
+        flags=re.IGNORECASE & re.UNICODE)
     return regex.sub('', string.replace('\'', ' '))
 
 
@@ -123,9 +123,9 @@ def safe_rename(source, target):
     new_element = target
     while os.path.exists(new_element):
         name, inc = (re.findall(r'(.*)_(\d+)$', new_element) or [(new_element, '0')])[0]
-        new_element = name + '_' + str(int(inc)+1)
+        new_element = name + u'_' + str(int(inc)+1)
     os.rename(source, new_element)
-    return new_element.encode('utf-8')
+    return new_element
 
 
 def standardize_element(source):
@@ -134,7 +134,7 @@ def standardize_element(source):
     new_name = standardize(name)
     if new_name != name:
         target = os.path.join(path, new_name + extension)
-        print safe_rename(source, target)
+        print safe_rename(source, target).encode('utf-8')
 
 
 def standardize_tree(source):
