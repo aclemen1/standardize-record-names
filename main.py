@@ -20,14 +20,21 @@ __contact__ = "unisis@unil.ch"
 __copyright__ = "Copyright 2014, University of Lausanne, Switzerland"
 __credits__ = ["Gérard Bagnoud", "Nathalie Montet", "Raphaël Mottier"]
 __license__ = "GPL"
-__date__ = "2014-05-30"
-__version__ = "1.0.2"
+__date__ = "2014-06-01"
+__version__ = "1.0.3"
 __maintainer__ = "Alain Clément-Pavon"
 __email__ = "alain.clement-pavon@unil.ch"
 __status__ = "Production"
 
 
 PRINTABLE = {'Lu', 'Ll', 'Nd', 'Zs', 'Pc'}
+VOID_WORDS = ["l'", 'le', 'la', 'les',
+              "d'", 'de', 'des',
+              'un', 'une',
+              "s'", 'si',
+              'à',
+              "n'",
+              'en', 'sur']
 
 
 def compose(*functions):
@@ -41,7 +48,18 @@ def remove_diacritics(string):
     """
     Remove diacritic characters.
     """
-    return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')
+    return unicodedata.normalize('NFKD', string.decode('utf-8'))\
+        .encode('ASCII', 'ignore').decode('ASCII').encode('utf-8')
+
+
+def remove_void_words(string):
+    """
+    Remove void words.
+    """
+    return ' '.join(
+        [word for word in string.replace("'", "' ").split()
+         if word.lower() not in VOID_WORDS]
+    )
 
 
 def remove_non_printable(string):
@@ -54,7 +72,7 @@ def remove_non_printable(string):
     for c in string.decode('utf-8'):
         c = unicodedata.category(c) in PRINTABLE and c or u'#'
         result.append(c)
-    return u''.join(result).replace(u'#', u'')
+    return (u''.join(result).replace(u'#', u'')).encode('utf-8')
 
 
 def remove_multiple_spaces(string):
@@ -105,7 +123,7 @@ def safe_rename(source, target):
     new_element = target
     while os.path.exists(new_element):
         name, inc = (re.findall(r'(.*)_(\d+)$', new_element) or [(new_element, '0')])[0]
-        new_element = name + u'_' + str(int(inc)+1).decode('utf-8')
+        new_element = name + '_' + str(int(inc)+1)
     os.rename(source, new_element)
     return new_element
 
@@ -116,7 +134,7 @@ def standardize_element(source):
     new_name = standardize(name)
     if new_name != name:
         target = os.path.join(path, new_name + extension)
-        print safe_rename(source, target).encode('utf-8')
+        print safe_rename(source, target)
 
 
 def standardize_tree(source):
@@ -130,7 +148,7 @@ def standardize_tree(source):
 
 def main():
     for line in sys.stdin:
-        source = os.path.abspath(line.decode('utf-8')).strip()
+        source = os.path.abspath(line).strip()
         standardize_tree(source)
 
 
