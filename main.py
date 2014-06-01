@@ -116,6 +116,7 @@ standardize = compose(
     remove_non_printable,
     substitute_underscore_to_minus,
     remove_diacritics,
+    remove_void_words
 )
 
 
