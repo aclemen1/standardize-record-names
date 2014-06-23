@@ -18,10 +18,10 @@ import unicodedata
 __author__ = "Alain Clément-Pavon"
 __contact__ = "unisis@unil.ch"
 __copyright__ = "Copyright 2014, University of Lausanne, Switzerland"
-__credits__ = ["Gérard Bagnoud", "Nathalie Montet", "Raphaël Mottier"]
+__credits__ = ["Gérard Bagnoud", "Nathalie Farenc", "Nathalie Montet", "Raphaël Mottier"]
 __license__ = "GPL"
-__date__ = "2014-06-01"
-__version__ = "1.0.3"
+__date__ = "2014-06-23"
+__version__ = "1.0.4"
 __maintainer__ = "Alain Clément-Pavon"
 __email__ = "alain.clement-pavon@unil.ch"
 __status__ = "Production"
@@ -102,6 +102,16 @@ def substitute_underscore_to_minus(string):
     return string
 
 
+def substitute_underscore_to_periods(string):
+    """
+    Substitute underscores to periods.
+    """
+    string = re.sub(r'(_+)\.+(_*)', '\\1\\2', string)
+    string = re.sub(r'\.+(_+)', '\\1', string)
+    string = re.sub(r'\.+', '_', string)
+    return string
+
+
 def strip_underscores(string):
     """
     Strip underscores.
@@ -114,6 +124,7 @@ standardize = compose(
     substitute_underscore_to_space,
     remove_multiple_spaces,
     remove_non_printable,
+    substitute_underscore_to_periods,
     substitute_underscore_to_minus,
     remove_diacritics,
     remove_void_words
@@ -123,8 +134,10 @@ standardize = compose(
 def safe_rename(source, target):
     new_element = target
     while os.path.exists(new_element):
-        name, inc = (re.findall(r'(.*)_(\d+)$', new_element) or [(new_element, '0')])[0]
-        new_element = name + '_' + str(int(inc)+1)
+        path, basename = os.path.split(new_element)
+        name, extension = os.path.splitext(basename)
+        raw_name, inc = (re.findall(r'(.*)_DISAMB_(\d+)$', name) or [(name, '0')])[0]
+        new_element = os.path.join(path, raw_name + '_DISAMB_' + str(int(inc)+1) + extension)
     os.rename(source, new_element)
     return new_element
 
@@ -142,7 +155,7 @@ def standardize_tree(source):
     if os.path.isfile(source):
         standardize_element(source)
     elif os.path.isdir(source):
-        for element in glob.glob(source + u'/*'):
+        for element in glob.glob((source.decode('utf-8') + u'/*').encode('utf-8')):
             standardize_tree(element)
         standardize_element(source)
 

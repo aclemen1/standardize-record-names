@@ -73,6 +73,28 @@ class TestStringModifiers(unittest.TestCase):
             main.substitute_underscore_to_minus('A_--_B')
         )
 
+    def test_underscore_to_periods(self):
+        self.assertEqual(
+            'A_B',
+            main.substitute_underscore_to_periods('A_.B')
+        )
+        self.assertEqual(
+            'A_B',
+            main.substitute_underscore_to_periods('A._B')
+        )
+        self.assertEqual(
+            'A_B_C_D_E',
+            main.substitute_underscore_to_periods('A.B.C.D.E')
+        )
+        self.assertEqual(
+            'A_B',
+            main.substitute_underscore_to_periods('A..B')
+        )
+        self.assertEqual(
+            'A__B',
+            main.substitute_underscore_to_periods('A_.._B')
+        )
+
     def test_underscores(self):
         self.assertEqual(
             'A',
