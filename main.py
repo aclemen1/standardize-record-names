@@ -136,6 +136,9 @@ def safe_rename(source, target):
     while os.path.exists(new_element):
         path, basename = os.path.split(new_element)
         name, extension = os.path.splitext(basename)
+        if os.path.isdir(new_element) and extension != ".app":
+            name += extension
+            extension = ""
         raw_name, inc = (re.findall(r'(.*)_DISAMB_(\d+)$', name) or [(name, '0')])[0]
         new_element = os.path.join(path, raw_name + '_DISAMB_' + str(int(inc)+1) + extension)
     os.rename(source, new_element)
@@ -145,6 +148,9 @@ def safe_rename(source, target):
 def standardize_element(source):
     path, basename = os.path.split(source)
     name, extension = os.path.splitext(basename)
+    if os.path.isdir(source) and extension != ".app":
+        name += extension
+        extension = ""
     new_name = standardize(name)
     if new_name != name:
         target = os.path.join(path, new_name + extension)
